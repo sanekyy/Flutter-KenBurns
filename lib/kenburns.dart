@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'KenburnsGenerator.dart';
+import 'kenburns_generator.dart';
 
 /// KenBurns widget, please provide a `child` Widget,
 /// Will animate the child, using random scale, translation & duration
@@ -37,29 +37,60 @@ class KenBurns extends StatefulWidget {
   /// Constructor for a single child KenBurns
   KenBurns({
     @required this.child,
-    this.minAnimationDuration = const Duration(milliseconds: 3000),
-    this.maxAnimationDuration = const Duration(milliseconds: 10000),
+    this.minAnimationDuration = const Duration(seconds: 3),
+    this.maxAnimationDuration = const Duration(seconds: 10),
     this.maxScale = 8,
   })  : this.childrenFadeDuration = null,
         this.children = null,
         this.childLoop = null,
-        assert(minAnimationDuration != null &&
-            minAnimationDuration.inMilliseconds > 0),
-        assert(maxAnimationDuration != null &&
-            maxAnimationDuration.inMilliseconds > 0),
-        assert(minAnimationDuration < maxAnimationDuration),
-        assert(maxScale > 1),
-        assert(child != null);
+        assert(
+          minAnimationDuration != null &&
+              minAnimationDuration.inMilliseconds > 0,
+          "minAnimationDuration should be not null and greater than 0",
+        ),
+        assert(
+          maxAnimationDuration != null &&
+              maxAnimationDuration.inMilliseconds > 0,
+          "maxAnimationDuration should be not null and greater than 0",
+        ),
+        assert(
+          minAnimationDuration < maxAnimationDuration,
+          "minAnimationDuration should be less then maxAnimationDuration",
+        ),
+        assert(
+          maxScale != null && maxScale > 1,
+          "maxScale should be not null and greater than 1",
+        ),
+        assert(child != null, "child can't be null");
 
   /// Constructor for multiple child KenBurns
-  KenBurns.multiple(
-      {this.minAnimationDuration = const Duration(milliseconds: 1000),
-      this.maxAnimationDuration = const Duration(milliseconds: 10000),
-      this.maxScale = 10,
-      this.childLoop = 3,
-      this.children,
-      this.childrenFadeDuration = const Duration(milliseconds: 800)})
-      : this.child = null;
+  KenBurns.multiple({
+    this.minAnimationDuration = const Duration(seconds: 1),
+    this.maxAnimationDuration = const Duration(seconds: 10),
+    this.maxScale = 10,
+    this.childLoop = 3,
+    this.children,
+    this.childrenFadeDuration = const Duration(milliseconds: 800),
+  })  : this.child = null,
+        assert(
+          minAnimationDuration != null &&
+              minAnimationDuration.inMilliseconds > 0,
+          "minAnimationDuration should be not null and greater than 0",
+        ),
+        assert(
+          maxAnimationDuration != null &&
+              maxAnimationDuration.inMilliseconds > 0,
+          "maxAnimationDuration should be not null and greater than 0",
+        ),
+        assert(
+          maxScale != null && maxScale > 1,
+          "maxScale should be not null and greater than 1",
+        ),
+        assert(children != null, "children can't be null"),
+        assert(
+          childrenFadeDuration != null,
+          "childrenFadeDuration can't be null",
+        );
 
   @override
   _KenBurnsState createState() => _KenBurnsState();
@@ -103,9 +134,6 @@ class _KenBurnsState extends State<KenBurns> with TickerProviderStateMixin {
 
   /// For developpers : set to true to enable logs
   bool _displayLogs = false;
-
-  /// The random [scale/duration/translation] generator
-  KenburnsGenerator _kenburnsGenerator = KenburnsGenerator();
 
   //region multiple childs
   /// if true : the widget setup is multipleImages
@@ -156,7 +184,7 @@ class _KenBurnsState extends State<KenBurns> with TickerProviderStateMixin {
   /// Using the [KenBurnsGenerator] generateNextConfig
   Future<void> _createNextAnimations({double height, double width}) async {
     final KenBurnsGeneratorConfig nextConfig =
-        _kenburnsGenerator.generateNextConfig(
+        KenburnsGenerator.generateNextConfig(
             width: width,
             height: height,
             maxScale: widget.maxScale,
@@ -247,7 +275,7 @@ class _KenBurnsState extends State<KenBurns> with TickerProviderStateMixin {
     _fadeController.reset();
   }
 
-  Future<void> fire({double height, double width}) async {
+  Future<void> fire({double width, double height}) async {
     _running = true;
     if (_displayMultipleImage) {
       _nextChildIndex = 1;
@@ -274,13 +302,6 @@ class _KenBurnsState extends State<KenBurns> with TickerProviderStateMixin {
   }
 
   @override
-  void initState() {
-    /// Reset _runnint state
-    _running = false;
-    super.initState();
-  }
-
-  @override
   void didUpdateWidget(KenBurns oldWidget) {
     super.didUpdateWidget(oldWidget);
 
@@ -299,7 +320,7 @@ class _KenBurnsState extends State<KenBurns> with TickerProviderStateMixin {
     return LayoutBuilder(builder: (context, constraints) {
       /// create the animation only if we have a size (not possible in initState())
       if (!_running) {
-        fire(height: constraints.maxHeight, width: constraints.maxWidth);
+        fire(width: constraints.maxWidth, height: constraints.maxHeight);
       }
       return ClipRect(
         ///Clip because we scale up children, if not clipped : child can take all the screen

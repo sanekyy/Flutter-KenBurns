@@ -18,16 +18,19 @@ class KenBurnsGeneratorConfig {
 
 /// The random scale, translation, duration generator
 class KenburnsGenerator {
-  Random _random = Random();
+  static final _random = Random();
 
   KenburnsGenerator();
 
   /// Generates a positive random integer distributed on the range
-  double _randomValue(double min, double max) =>
+  static double _randomValue(double min, double max) =>
       min + _random.nextDouble() * (max - min);
 
-  double generateNextScale(
-      {double lastScale, double maxScale, bool scaleDown}) {
+  static double generateNextScale({
+    double lastScale,
+    double maxScale,
+    bool scaleDown,
+  }) {
     final double minScale = 1.0;
     if (scaleDown && minScale < lastScale) {
       return _randomValue(minScale, lastScale);
@@ -36,15 +39,21 @@ class KenburnsGenerator {
     }
   }
 
-  Duration generateNextDuration(
-      {double minDurationMillis, double maxDurationMillis}) {
+  static Duration generateNextDuration({
+    double minDurationMillis,
+    double maxDurationMillis,
+  }) {
     return Duration(
         milliseconds:
             _randomValue(minDurationMillis, maxDurationMillis).floor());
   }
 
-  Offset generateNextTranslation(
-      {double width, double height, Size nextSize, double nextScale}) {
+  static Offset generateNextTranslation({
+    double width,
+    double height,
+    Size nextSize,
+    double nextScale,
+  }) {
     final availableXOffset = ((nextSize.width - width) / 2);
     final availableYOffset = ((nextSize.height - height) / 2);
 
@@ -53,7 +62,7 @@ class KenburnsGenerator {
     return Offset(x, y);
   }
 
-  KenBurnsGeneratorConfig generateNextConfig({
+  static KenBurnsGeneratorConfig generateNextConfig({
     double width,
     double height,
     double maxScale,
