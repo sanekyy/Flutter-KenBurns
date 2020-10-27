@@ -36,6 +36,7 @@ class KenBurns extends StatefulWidget {
 
   /// Constructor for a single child KenBurns
   KenBurns({
+    Key key,
     @required this.child,
     this.minAnimationDuration = const Duration(seconds: 3),
     this.maxAnimationDuration = const Duration(seconds: 10),
@@ -61,10 +62,12 @@ class KenBurns extends StatefulWidget {
           maxScale != null && maxScale > 1,
           "maxScale should be not null and greater than 1",
         ),
-        assert(child != null, "child can't be null");
+        assert(child != null, "child can't be null"),
+        super(key: key);
 
   /// Constructor for multiple child KenBurns
   KenBurns.multiple({
+    Key key,
     this.minAnimationDuration = const Duration(seconds: 1),
     this.maxAnimationDuration = const Duration(seconds: 10),
     this.maxScale = 10,
@@ -90,7 +93,8 @@ class KenBurns extends StatefulWidget {
         assert(
           childrenFadeDuration != null,
           "childrenFadeDuration can't be null",
-        );
+        ),
+        super(key: key);
 
   @override
   _KenBurnsState createState() => _KenBurnsState();
